@@ -1,4 +1,4 @@
-#!usr/bin/env bash
+#!/usr/bin/env bash
 #Bash script that pings an ip addr passed as an arg 5 times
 if ["$#" -eq 0]
 then
