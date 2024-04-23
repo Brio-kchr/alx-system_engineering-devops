@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Installing nginx on server and serving a basic html
+#  and adding a permanent redirection to a youtube video
+#  as well as a custom 404 error page
+
+# Installation of NginX
+sudo apt-get update
+sudo apt-get -y install nginx
+# Allowing Nginx through the firewall
+# sudo ufw enable (may disrupt SSH connection if not allowed)
+sudo ufw allow 'Nginx HTTP'
+# Writing "Hello World!" to one of the default served htmls
+sudo chmod 666 /var/www/html/index.nginx-debian.html
+echo "Hello World!" > /var/www/html/index.nginx-debian.html
+sudo chmod 644 /var/www/html/index.nginx-debian.html
+# Adding the redirection
+redirect_page="https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent"
+redirect_text="\\\trewrite ^/redirect_me $redirect_page;"
+nginx_conf="/etc/nginx/sites-available/default"
+sudo sed -i "/listen \[\:\:\]\:80 default_server;/a $redirect_text" $nginx_conf
+# Creating the new error page and setting it as the 404 error page
+sudo touch /var/www/html/error-404.html
+sudo chmod 666 /var/www/html/error-404.html
+echo "Ceci n'est pas une page" > /var/www/html/error-404.html
+sudo chmod 644 /var/www/html/error-404.html
+sudo sed -i "/server_name _;/a \\\terror_page 404 /error-404.html;" $nginx_conf
+# To refresh the caches and pick up new changes
+sudo service nginx restart
