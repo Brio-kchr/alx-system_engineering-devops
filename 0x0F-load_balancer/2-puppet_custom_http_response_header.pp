@@ -25,6 +25,13 @@ file_line { 'Custom header':
   multiple => true
 }
 
+file_line { 'init script':
+  ensure   => present,
+  path     => '/etc/default/haproxy',
+  line     => 'ENABLED=1',
+  multiple => true
+}
+
 exec { 'Restart':
   require => Exec['Install Nginx'],
   command => 'sudo service nginx restart',
